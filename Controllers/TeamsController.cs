@@ -1,4 +1,5 @@
 using E_Commerce.Data;
+using E_Commerce.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Rest_API.Models;
@@ -8,62 +9,92 @@ namespace Rest_API.Controllers;
 [Route("api/v1/[controller]")]
 [ApiController]
 public class TeamsController : ControllerBase {
-    private readonly AppDbContext _context;
+    private readonly ITeamRepository _teamRepository;
 
-    public TeamsController(AppDbContext context) {
-        _context = context;
+    public TeamsController(ITeamRepository teamRepository) {
+        _teamRepository = teamRepository;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get() {
-        var teams = await _context.Teams.ToListAsync();
+        try {
+            var teams = await _teamRepository.GetAllTeams();
 
-        return Ok(teams);
+            if (teams == null) {
+                return NotFound();
+            }
+
+            return Ok(teams);
+        }
+        catch {
+            return StatusCode(500, "ERROR !");
+        }
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get(int id) {
-        var team = await _context.Teams.FirstOrDefaultAsync(x => x.Id == id);
+    public async Task<IActionResult> GetById(int id) {
+        try {
+            var team = await _teamRepository.GetById(id);
 
-        if (team == null) {
-            return BadRequest("Invalid ID");
+            if (team == null) {
+                return NotFound();
+            }
+
+            return Ok(team);
         }
-
-        return Ok(team);
+        catch {
+            return StatusCode(500, "ERROR !");
+        }
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(Team team) {
-        await _context.Teams.AddAsync(team);
-        await _context.SaveChangesAsync();
+    public async Task<IActionResult> Post([FromBody] Team team) {
+        try {
+            var status = await _teamRepository.Create(team);
 
-        return CreatedAtAction("Get", team.Id, team);
+            if (status > 0) {
+                return CreatedAtAction("GetById", new {id = team.Id}, team);
+            }
+            else {
+                return NotFound();
+            }
+        }
+        catch {
+            return StatusCode(500, "ERROR !");
+        }
     }
 
     [HttpPatch]
-    public async Task<IActionResult> Patch(int id, string country) {
-        var team = _context.Teams.FirstOrDefault(x => x.Id == id);
+    public async Task<IActionResult> UpdateCountry(int id, string country) {
+        try {
+            var result = await _teamRepository.UpdateCountry(id, country);
 
-        if (team == null) {
-            return BadRequest("INVALID ID");
+            if (result == true) {
+                return Ok();
+            }
+            else {
+                return BadRequest();
+            }
         }
-
-        team.Country = country;
-    
-        return Ok("update successfully");
+        catch {
+            return StatusCode(500, "ERROR !");
+        }
     }
 
     [HttpDelete]
     public async Task<IActionResult> Delete(int id) {
-        var team = _context.Teams.FirstOrDefault(x => x.Id == id);
-        
-        if (team == null) {
-            return BadRequest("INVALID ID");
+        try {
+            var result = await _teamRepository.Delete(id);
+
+            if (result == true) {
+                return Ok();
+            }
+            else {
+                return BadRequest();
+            }
         }
-
-        _context.Teams.Remove(team);
-        await _context.SaveChangesAsync();
-
-        return Ok("Delete successfully");
+        catch {
+            return StatusCode(500, "ERROR !");
+        }
     }
 }
