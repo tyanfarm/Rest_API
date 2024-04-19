@@ -1,7 +1,7 @@
 using System.Text;
 using E_Commerce.Configurations;
-using E_Commerce.Data;
-using E_Commerce.Repositories;
+// using E_Commerce.Data;
+// using E_Commerce.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,14 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // DbContext
-var serverVersion = new MySqlServerVersion(new Version(8, 0, 27));
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), serverVersion);
-});
+// var serverVersion = new MySqlServerVersion(new Version(8, 0, 27));
+// builder.Services.AddDbContext<AppDbContext>(options =>
+// {
+//     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), serverVersion);
+// });
 
 // Repositories
-builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+// builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 
 // JWT Config
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
