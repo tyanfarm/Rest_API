@@ -1,11 +1,11 @@
-// using Rest_API.Models;
+using Rest_API.Models;
 
-// namespace E_Commerce.Repositories;
+namespace Rest_API.Repositories;
 
-// public interface ITeamRepository {
-//     Task<List<Team>> GetAllTeams();
-//     Task<Team> GetById(int id);
-//     Task<int> Create(Team team);
-//     Task<bool> UpdateCountry(int id, string country);
-//     Task<bool> Delete(int id);
-// }
+public interface ITeamRepository {
+    Task<List<Team>> GetAllTeams();
+    Task<Team> GetById(int id);
+    Task<int> Create(Team team);
+    Task<bool> Update(int id, string? country, string? teamPrincipal);
+    Task<bool> Delete(int id);
+}

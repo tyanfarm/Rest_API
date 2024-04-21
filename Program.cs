@@ -1,26 +1,24 @@
 using System.Text;
-using E_Commerce.Configurations;
-// using E_Commerce.Data;
-// using E_Commerce.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Rest_API.Data;
+using Rest_API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // DbContext
-// var serverVersion = new MySqlServerVersion(new Version(8, 0, 27));
-// builder.Services.AddDbContext<AppDbContext>(options =>
-// {
-//     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), serverVersion);
-// });
+var serverVersion = new MySqlServerVersion(new Version(8, 0, 27));
+builder.Services.AddDbContext<RestapiContext>(options =>
+{
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), serverVersion);
+});
 
 // Repositories
-// builder.Services.AddScoped<ITeamRepository, TeamRepository>();
-
-// JWT Config
-builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JwtConfig"));
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 
 // Authentication
 builder.Services
@@ -30,11 +28,14 @@ builder.Services
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
+// Middleware xác thực JWT
 .AddJwtBearer(jwt => 
 {
     var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
 
+    // token sẽ được lưu trong HttpContext sau khi xác thực
     jwt.SaveToken = true;
+
     jwt.TokenValidationParameters = new TokenValidationParameters() 
     {
         ValidateIssuerSigningKey = true,
@@ -46,10 +47,36 @@ builder.Services
     };
 });
 
+// Add ASP.NET Core Identity
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<RestapiContext>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => {
+    options.AddSecurityDefinition(name: JwtBearerDefaults.AuthenticationScheme,
+        securityScheme: new OpenApiSecurityScheme {
+            Name = "Authorization",
+            Description = "Enter the Bearer Authorization : `Bearer Generated-JWT-Token`",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+    
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement 
+    {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = JwtBearerDefaults.AuthenticationScheme
+                }
+            }, 
+            new string[] {}
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -62,6 +89,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

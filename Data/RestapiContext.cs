@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Rest_API.Models;
 
-namespace Rest_API.Models;
+namespace Rest_API.Data;
 
 public partial class RestapiContext : IdentityDbContext
 {
