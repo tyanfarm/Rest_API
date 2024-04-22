@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Rest_API.Models;
 using Rest_API.Models.DTO;
+using Rest_API.Services;
 
 namespace Rest_API.Controllers;
 
@@ -14,10 +16,18 @@ namespace Rest_API.Controllers;
 public class AuthenticationController : ControllerBase {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly IEmailSender _emailSender;
 
-    public AuthenticationController(UserManager<IdentityUser> userManager, IConfiguration configuration) {
+    public AuthenticationController
+    (
+        UserManager<IdentityUser> userManager, 
+        IConfiguration configuration, 
+        IEmailSender emailSender
+    ) 
+    {
         _userManager = userManager;
         _configuration = configuration;
+        _emailSender = emailSender;
     }
 
     [HttpPost]
@@ -42,6 +52,7 @@ public class AuthenticationController : ControllerBase {
             var new_user = new IdentityUser() {
                 Email = registerRequest.Email,
                 UserName = registerRequest.Email,
+                EmailConfirmed = false
             };
 
             // IdentityResult
@@ -50,19 +61,83 @@ public class AuthenticationController : ControllerBase {
             if (is_created.Succeeded == true) {
                 // create token
                 var token = generateJwtToken(new_user);
-
-                return Ok(new AuthResult() 
-                {
-                    Result = true,
-                    Token = token
-                });
+            }
+            else {
+                // Password cần phải có kí tự A-Z, có kí tự số, có kí tự symbol
+                return BadRequest(is_created);
             }
 
-            // Password cần phải có kí tự A-Z, có kí tự số, có kí tự symbol
-            return BadRequest(is_created);
+            // Verify Email
+            if (new_user != null) {
+                var email_token = await _userManager.GenerateEmailConfirmationTokenAsync(new_user);
+
+                var email_body = $"Please confirm your email address by click here: #URL# ";
+
+                // http / https + `://`
+                var callback_url = Request.Scheme + "://" + Request.Host + 
+                                    Url.Action("ConfirmEmail", "Authentication", 
+                                                new {userId = new_user.Id, code = email_token}); 
+
+                // mã hóa token thành các mã HTML hợp lệ
+                var body = email_body.Replace("#URL#", callback_url);
+
+                // Send EMAIL
+                var subject = "Verify email";
+
+                try {
+                    await _emailSender.SendEmailAsync(new_user.Email, subject, body);
+
+                    return Ok("Send email successfully");
+                }
+                catch {
+                    return BadRequest(new AuthResult() {
+                        Result = false,
+                        Errors = new List<string>()
+                        {
+                            "Verify Email ERROR!"
+                        }
+                    });
+                }
+            }
         }
 
         return BadRequest();
+    }
+
+    [Route("ConfirmEmail")]
+    [HttpGet]
+    public async Task<IActionResult> ConfirmEmail(string userId, string code) {
+        if (userId == null || code == null) {
+            return BadRequest(new AuthResult() 
+            {
+                Result = false,
+                Errors = new List<string>()
+                {
+                    "Invalid email confirmation url"
+                }
+            });
+        }
+
+        var user = await _userManager.FindByIdAsync(userId);
+
+        // Nếu email đã đăng kí
+        if (user == null) {
+            return BadRequest(new AuthResult() {
+                Result = false,
+                Errors = new List<string>()
+                {
+                    "Invalid email",
+                    userId
+                }
+            });
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, code);
+        var status = result.Succeeded
+                    ? "Thank you for confirming email"
+                    : "Your email is not confirmed, please try again later";
+
+        return Ok(status);
     }
 
     [HttpPost]
@@ -76,7 +151,17 @@ public class AuthenticationController : ControllerBase {
                 return BadRequest(new AuthResult() {
                     Result = false,
                     Errors = new List<string>() {
-                        "User isn't existed"
+                        "User isn't existed !"
+                    }
+                });
+            }
+
+            // Check email confirmed
+            if (user.EmailConfirmed == false) {
+                return BadRequest(new AuthResult() {
+                    Result = false,
+                    Errors = new List<string>() {
+                        "Email haven't confirmed !"
                     }
                 });
             }

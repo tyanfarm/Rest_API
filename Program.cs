@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Rest_API.Data;
+using Rest_API.Private;
 using Rest_API.Repositories;
+using Rest_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,8 +19,14 @@ builder.Services.AddDbContext<RestapiContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), serverVersion);
 });
 
+// Info of gmail sender
+builder.Services.AddSingleton<EmailInfo>();
+
 // Repositories
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+
+// Services
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 // Authentication
 builder.Services

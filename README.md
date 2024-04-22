@@ -9,3 +9,7 @@
 
 # Functionalities
 - Authentication & Authorization with JWT 
+- Verify / Confirm Email with User Registration
+    + Use Gmail SMTP
+    + Add 2-Step Verification & App passwords (16-character) 
+    + Send email with `email` and `App password` 
