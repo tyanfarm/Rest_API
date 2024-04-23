@@ -28,6 +28,21 @@ builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 // Services
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
+// Key for checking JWT
+var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
+var tokenValidationParameter = new TokenValidationParameters() 
+{
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(key),
+    ValidateIssuer = false,     // for dev
+    ValidateAudience = false,   // for dev
+        
+    // Kiểm tra token hết hạn chưa
+    RequireExpirationTime = true,      // for dev - need to update when refresh token is added
+
+    ValidateLifetime = true
+};
+
 // Authentication
 builder.Services
 .AddAuthentication(options => 
@@ -39,20 +54,10 @@ builder.Services
 // Middleware xác thực JWT
 .AddJwtBearer(jwt => 
 {
-    var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
-
     // token sẽ được lưu trong HttpContext sau khi xác thực
     jwt.SaveToken = true;
 
-    jwt.TokenValidationParameters = new TokenValidationParameters() 
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,     // for dev
-        ValidateAudience = false,   // for dev
-        RequireExpirationTime = false,      // for dev - need to update when refresh token is added
-        ValidateLifetime = true
-    };
+    jwt.TokenValidationParameters = tokenValidationParameter;
 });
 
 // Add ASP.NET Core Identity

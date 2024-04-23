@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Mvc;
 using Rest_API.Private;
-// using Rest_API.Private;
 
 namespace Rest_API.Services;
 

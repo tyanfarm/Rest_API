@@ -217,7 +217,9 @@ public class AuthenticationController : ControllerBase {
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString())
             }),
 
-            Expires = DateTime.Now.AddHours(1),
+            Expires = DateTime.UtcNow
+                        .Add(TimeSpan.Parse( _configuration.GetSection("JwtConfig:ExpiryTimeFrame").Value)),
+
             // SymmetricSecurityKey - khóa đối xứng
             // mã hóa bằng thuật toán HMAC-SHA256
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
