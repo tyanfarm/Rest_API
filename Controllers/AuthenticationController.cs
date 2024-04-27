@@ -393,7 +393,7 @@ public class AuthenticationController : ControllerBase {
             JwtId = token.Id,       // jti
             Token = GenerateRandomString(24),            // generate a new refresh token 
             AddedDate = DateTime.UtcNow,
-            ExpiryDate = DateTime.UtcNow.AddMonths(1),
+            ExpiryDate = DateTime.UtcNow.AddMonths(2),
             IsRevoked = false,
             IsUsed = false,
             UserId = user.Id
