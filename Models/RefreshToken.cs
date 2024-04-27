@@ -9,6 +9,7 @@ public class RefreshToken {
 
     public string JwtId {get; set;}
 
+    // Sau khi sử dụng Refresh Token để generate ra Access token mới -> IsUsed = 1
     public bool IsUsed {get; set;}
 
     // Thu hồi

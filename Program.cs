@@ -37,9 +37,10 @@ var tokenValidationParameter = new TokenValidationParameters()
     ValidateIssuer = false,     // for dev
     ValidateAudience = false,   // for dev
         
-    // Kiểm tra token hết hạn chưa
+    // Kiểm tra token có ngày hết hạn không
     RequireExpirationTime = true,      // for dev - need to update when refresh token is added
 
+    // Kiểm tra token còn sống không
     ValidateLifetime = true
 };
 
@@ -60,11 +61,16 @@ builder.Services
     jwt.TokenValidationParameters = tokenValidationParameter;
 });
 
+builder.Services.AddSingleton(tokenValidationParameter);
+
+
 // Add ASP.NET Core Identity
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddEntityFrameworkStores<RestapiContext>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => {
@@ -108,3 +114,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
