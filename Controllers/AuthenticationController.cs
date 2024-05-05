@@ -82,18 +82,19 @@ public class AuthenticationController : ControllerBase {
 
                 var email_body = $"Please confirm your email address by click here: #URL# ";
 
-                // http / https + `://`
+                // (http / https -- Scheme) + `://` + (localhost:5281 -- Host)
                 var callback_url = Request.Scheme + "://" + Request.Host + 
                                     Url.Action("ConfirmEmail", "Authentication", 
                                                 new {userId = new_user.Id, code = email_token}); 
 
-                // mã hóa token thành các mã HTML hợp lệ
+                // Thay thế link vào chuỗi string
                 var body = email_body.Replace("#URL#", callback_url);
 
                 // Send EMAIL
                 var subject = "Verify email";
 
                 try {
+                    // email receiver - Subject (chủ đề) - Content (nội dung mail)
                     await _emailSender.SendEmailAsync(new_user.Email, subject, body);
 
                     return Ok("Send email successfully");
