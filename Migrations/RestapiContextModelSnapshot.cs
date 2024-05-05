@@ -218,16 +218,49 @@ namespace Rest_API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Rest_API.Models.RefreshToken", b =>
+            modelBuilder.Entity("Rest_API.Models.Player", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .UseCollation("utf8mb3_general_ci");
+
+                    MySqlPropertyBuilderExtensions.HasCharSet(b.Property<string>("Name"), "utf8mb3");
+
+                    b.Property<string>("Position")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .UseCollation("utf8mb3_general_ci");
+
+                    MySqlPropertyBuilderExtensions.HasCharSet(b.Property<string>("Position"), "utf8mb3");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "TeamId" }, "Id_idx");
+
+                    b.ToTable("players", (string)null);
+                });
+
+            modelBuilder.Entity("Rest_API.Models.Refreshtoken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<DateTime>("AddedDate")
+                        .HasMaxLength(6)
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("ExpiryDate")
+                        .HasMaxLength(6)
                         .HasColumnType("datetime(6)");
 
                     b.Property<bool>("IsRevoked")
@@ -248,9 +281,10 @@ namespace Rest_API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PRIMARY");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("refreshtokens", (string)null);
                 });
 
             modelBuilder.Entity("Rest_API.Models.Team", b =>
@@ -326,6 +360,22 @@ namespace Rest_API.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Rest_API.Models.Player", b =>
+                {
+                    b.HasOne("Rest_API.Models.Team", "Team")
+                        .WithMany("Players")
+                        .HasForeignKey("TeamId")
+                        .IsRequired()
+                        .HasConstraintName("Id");
+
+                    b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("Rest_API.Models.Team", b =>
+                {
+                    b.Navigation("Players");
                 });
 #pragma warning restore 612, 618
         }

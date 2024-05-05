@@ -267,7 +267,7 @@ public class AuthenticationController : ControllerBase {
             }
 
             // Nếu access token hết hạn -> kiểm tra Refresh Token
-            var storedToken = await _context.RefreshTokens.
+            var storedToken = await _context.Refreshtokens.
                                     FirstOrDefaultAsync(x => x.Token == tokenRequestDTO.RefreshToken);
 
             // Kiểm tra refresh token có phải của access token gửi vào không
@@ -330,7 +330,7 @@ public class AuthenticationController : ControllerBase {
 
             // Cập nhật refresh token đã sử dụng để generate access token mới
             storedToken.IsUsed = true;
-            _context.RefreshTokens.Update(storedToken);
+            _context.Refreshtokens.Update(storedToken);
             await _context.SaveChangesAsync();
 
             // Return new access token
@@ -390,7 +390,7 @@ public class AuthenticationController : ControllerBase {
         var token = jwtTokenHanlder.CreateToken(tokenDescriptor);
         var jwtToken = jwtTokenHanlder.WriteToken(token);
 
-        var refreshToken = new RefreshToken() {
+        var refreshToken = new Refreshtoken() {
             JwtId = token.Id,       // jti
             Token = GenerateRandomString(24),            // generate a new refresh token 
             AddedDate = DateTime.UtcNow,
@@ -401,7 +401,7 @@ public class AuthenticationController : ControllerBase {
         };
 
         // Add refresh
-        await _context.RefreshTokens.AddAsync(refreshToken);
+        await _context.Refreshtokens.AddAsync(refreshToken);
         await _context.SaveChangesAsync();
 
         var result = new AuthResult() {
