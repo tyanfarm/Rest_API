@@ -238,7 +238,7 @@ namespace Rest_API.Migrations
 
                     MySqlPropertyBuilderExtensions.HasCharSet(b.Property<string>("Position"), "utf8mb3");
 
-                    b.Property<int>("TeamId")
+                    b.Property<int?>("TeamId")
                         .HasColumnType("int");
 
                     b.HasKey("Id")
@@ -367,8 +367,7 @@ namespace Rest_API.Migrations
                     b.HasOne("Rest_API.Models.Team", "Team")
                         .WithMany("Players")
                         .HasForeignKey("TeamId")
-                        .IsRequired()
-                        .HasConstraintName("Id");
+                        .HasConstraintName("TeamId");
 
                     b.Navigation("Team");
                 });

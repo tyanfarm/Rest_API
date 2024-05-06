@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Rest_API.Models;
 
@@ -9,9 +11,9 @@ public partial class Player
 
     public string? Name { get; set; }
 
-    public int TeamId { get; set; }
+    public int? TeamId { get; set; }
 
     public string? Position { get; set; }
 
-    public virtual Team Team { get; set; } = null!;
+    public virtual Team? Team { get; set; }
 }

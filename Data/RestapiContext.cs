@@ -54,8 +54,7 @@ public partial class RestapiContext : IdentityDbContext
 
             entity.HasOne(d => d.Team).WithMany(p => p.Players)
                 .HasForeignKey(d => d.TeamId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Id");
+                .HasConstraintName("TeamId");
         });
 
         modelBuilder.Entity<Refreshtoken>(entity =>
