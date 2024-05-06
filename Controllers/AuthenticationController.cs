@@ -82,18 +82,19 @@ public class AuthenticationController : ControllerBase {
 
                 var email_body = $"Please confirm your email address by click here: #URL# ";
 
-                // http / https + `://`
+                // (http / https -- Scheme) + `://` + (localhost:5281 -- Host)
                 var callback_url = Request.Scheme + "://" + Request.Host + 
                                     Url.Action("ConfirmEmail", "Authentication", 
                                                 new {userId = new_user.Id, code = email_token}); 
 
-                // mã hóa token thành các mã HTML hợp lệ
+                // Thay thế link vào chuỗi string
                 var body = email_body.Replace("#URL#", callback_url);
 
                 // Send EMAIL
                 var subject = "Verify email";
 
                 try {
+                    // email receiver - Subject (chủ đề) - Content (nội dung mail)
                     await _emailSender.SendEmailAsync(new_user.Email, subject, body);
 
                     return Ok("Send email successfully");
@@ -266,7 +267,7 @@ public class AuthenticationController : ControllerBase {
             }
 
             // Nếu access token hết hạn -> kiểm tra Refresh Token
-            var storedToken = await _context.RefreshTokens.
+            var storedToken = await _context.Refreshtokens.
                                     FirstOrDefaultAsync(x => x.Token == tokenRequestDTO.RefreshToken);
 
             // Kiểm tra refresh token có phải của access token gửi vào không
@@ -329,7 +330,7 @@ public class AuthenticationController : ControllerBase {
 
             // Cập nhật refresh token đã sử dụng để generate access token mới
             storedToken.IsUsed = true;
-            _context.RefreshTokens.Update(storedToken);
+            _context.Refreshtokens.Update(storedToken);
             await _context.SaveChangesAsync();
 
             // Return new access token
@@ -389,7 +390,7 @@ public class AuthenticationController : ControllerBase {
         var token = jwtTokenHanlder.CreateToken(tokenDescriptor);
         var jwtToken = jwtTokenHanlder.WriteToken(token);
 
-        var refreshToken = new RefreshToken() {
+        var refreshToken = new Refreshtoken() {
             JwtId = token.Id,       // jti
             Token = GenerateRandomString(24),            // generate a new refresh token 
             AddedDate = DateTime.UtcNow,
@@ -400,7 +401,7 @@ public class AuthenticationController : ControllerBase {
         };
 
         // Add refresh
-        await _context.RefreshTokens.AddAsync(refreshToken);
+        await _context.Refreshtokens.AddAsync(refreshToken);
         await _context.SaveChangesAsync();
 
         var result = new AuthResult() {

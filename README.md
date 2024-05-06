@@ -1,11 +1,15 @@
 # Rest_API
 
+# Version
+- .NET SDK 7.0.400
+
 # Nuget
 - Microsoft.EntityFrameworkCore.Tools --version 6.0.3
 - Pomelo.EntityFrameworkCore.MySql -version 7.0.0
 - Microsoft.AspNetCore.Authentication.JwtBearer --version 7.0.0
 - Microsoft.AspNetCore.Identity.EntityFrameworkCore --version 7.0.3
 - Microsoft.AspNetCore.Identity.UI --version 7.0.0
+- System.Runtime.Caching --version 8.0.0 (in-memory caching)
 
 # Functionalities
 - Authentication & Authorization with JWT 
@@ -17,3 +21,7 @@
 # Pipelines Authentication with Refresh Token
 
 ![screenshot](./Temp/RefreshToken.png)
+
+# In-Memory Caching
+
+![screenshot](./Temp/Caching.png)

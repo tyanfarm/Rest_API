@@ -12,4 +12,6 @@ public partial class Team
     public string Country { get; set; } = null!;
 
     public string TeamPrincipal { get; set; } = null!;
+
+    public virtual ICollection<Player> Players { get; } = new List<Player>();
 }
