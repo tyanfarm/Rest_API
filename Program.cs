@@ -26,6 +26,7 @@ builder.Services.AddSingleton<EmailInfo>();
 builder.Services.AddScoped<ICacheService, CacheService>();
 
 // Repositories
+builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 
 // Services
