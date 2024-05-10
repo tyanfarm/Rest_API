@@ -10,6 +10,7 @@
 - Microsoft.AspNetCore.Identity.EntityFrameworkCore --version 7.0.3
 - Microsoft.AspNetCore.Identity.UI --version 7.0.0
 - System.Runtime.Caching --version 8.0.0 (in-memory caching)
+- AutoMapper.Extensions.Microsoft.DependencyInjection --version 12.0.1 (mapping)
 
 # Functionalities
 - Authentication & Authorization with JWT 
@@ -25,3 +26,5 @@
 # In-Memory Caching
 
 ![screenshot](./Temp/Caching.png)
+
+# AutoMapper & DTOs

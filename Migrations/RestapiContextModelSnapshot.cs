@@ -218,6 +218,50 @@ namespace Rest_API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Rest_API.Models.Match", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("AteamId")
+                        .HasColumnType("int")
+                        .HasColumnName("ATeamId");
+
+                    b.Property<int>("BteamId")
+                        .HasColumnType("int")
+                        .HasColumnName("BTeamId");
+
+                    b.Property<DateTime>("Schedule")
+                        .HasMaxLength(6)
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Score")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .UseCollation("utf8mb3_general_ci");
+
+                    MySqlPropertyBuilderExtensions.HasCharSet(b.Property<string>("Score"), "utf8mb3");
+
+                    b.Property<string>("Stadium")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)")
+                        .UseCollation("utf8mb3_general_ci");
+
+                    MySqlPropertyBuilderExtensions.HasCharSet(b.Property<string>("Stadium"), "utf8mb3");
+
+                    b.HasKey("Id")
+                        .HasName("PRIMARY");
+
+                    b.HasIndex(new[] { "AteamId" }, "ATeamId_idx");
+
+                    b.HasIndex(new[] { "BteamId" }, "BTeamId_idx");
+
+                    b.ToTable("matches", (string)null);
+                });
+
             modelBuilder.Entity("Rest_API.Models.Player", b =>
                 {
                     b.Property<int>("Id")
@@ -362,6 +406,25 @@ namespace Rest_API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Rest_API.Models.Match", b =>
+                {
+                    b.HasOne("Rest_API.Models.Team", "Ateam")
+                        .WithMany("MatchAteams")
+                        .HasForeignKey("AteamId")
+                        .IsRequired()
+                        .HasConstraintName("ATeamId");
+
+                    b.HasOne("Rest_API.Models.Team", "Bteam")
+                        .WithMany("MatchBteams")
+                        .HasForeignKey("BteamId")
+                        .IsRequired()
+                        .HasConstraintName("BTeamId");
+
+                    b.Navigation("Ateam");
+
+                    b.Navigation("Bteam");
+                });
+
             modelBuilder.Entity("Rest_API.Models.Player", b =>
                 {
                     b.HasOne("Rest_API.Models.Team", "Team")
@@ -374,6 +437,10 @@ namespace Rest_API.Migrations
 
             modelBuilder.Entity("Rest_API.Models.Team", b =>
                 {
+                    b.Navigation("MatchAteams");
+
+                    b.Navigation("MatchBteams");
+
                     b.Navigation("Players");
                 });
 #pragma warning restore 612, 618

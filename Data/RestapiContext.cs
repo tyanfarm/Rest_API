@@ -17,6 +17,8 @@ public partial class RestapiContext : IdentityDbContext
     {
     }
 
+    public virtual DbSet<Match> Matches { get; set; }
+
     public virtual DbSet<Player> Players { get; set; }
 
     public virtual DbSet<Refreshtoken> Refreshtokens { get; set; }
@@ -34,6 +36,39 @@ public partial class RestapiContext : IdentityDbContext
         modelBuilder
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
+
+        modelBuilder.Entity<Match>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("matches");
+
+            entity.HasIndex(e => e.AteamId, "ATeamId_idx");
+
+            entity.HasIndex(e => e.BteamId, "BTeamId_idx");
+
+            entity.Property(e => e.AteamId).HasColumnName("ATeamId");
+            entity.Property(e => e.BteamId).HasColumnName("BTeamId");
+            entity.Property(e => e.Schedule).HasMaxLength(6);
+            entity.Property(e => e.Score)
+                .HasMaxLength(10)
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+            entity.Property(e => e.Stadium)
+                .HasMaxLength(20)
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+
+            entity.HasOne(d => d.Ateam).WithMany(p => p.MatchAteams)
+                .HasForeignKey(d => d.AteamId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("ATeamId");
+
+            entity.HasOne(d => d.Bteam).WithMany(p => p.MatchBteams)
+                .HasForeignKey(d => d.BteamId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("BTeamId");
+        });
 
         modelBuilder.Entity<Player>(entity =>
         {

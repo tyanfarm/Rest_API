@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "eQIOc50m0i/9RCGaAxp8t1Ae9N4BsWg6yZeFNyyJ0awtHOgDdyg1dIuGqz9a4881ljWGz1NakcPwbmezg4yTfQ==",
+  "dgSpecHash": "8AnH10ZpgXjQRSFB7vrKVvywS9PTMO5X4fn8aM+4sbZJ+SNQN84+dlcwBicC6QClxq6wgk0pfXV3yADNC/4hAQ==",
   "success": true,
   "projectFilePath": "D:\\Tyan\\ASPNET\\Rest_API\\Rest_API.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\PC\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\PC\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\7.0.0\\microsoft.aspnetcore.authentication.jwtbearer.7.0.0.nupkg.sha512",
     "C:\\Users\\PC\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\7.0.3\\microsoft.aspnetcore.cryptography.internal.7.0.3.nupkg.sha512",

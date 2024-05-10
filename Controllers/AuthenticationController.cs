@@ -295,6 +295,7 @@ public class AuthenticationController : ControllerBase {
                 };
             }
 
+            // Token được dùng chưa
             if (storedToken.IsUsed) {
                 return new AuthResult()
                 {
@@ -305,6 +306,7 @@ public class AuthenticationController : ControllerBase {
                 };
             }
 
+            // Token bị thu hồi không
             if (storedToken.IsRevoked) {
                 return new AuthResult()
                 {
