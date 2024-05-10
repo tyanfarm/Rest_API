@@ -5,7 +5,7 @@ namespace Rest_API.Models;
 
 public partial class Match
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     public int AteamId { get; set; }
 
