@@ -27,4 +27,5 @@
 
 ![screenshot](./Temp/Caching.png)
 
-# AutoMapper & DTOs
+# Mapping & DTOs
+- Use AutoMapper Profile

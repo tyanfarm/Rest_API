@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Rest_API.Data;
 using Rest_API.Models;
 using Rest_API.Models.DTO;
@@ -7,21 +9,17 @@ namespace Rest_API.Repositories;
 
 public class MatchRepository : IMatchRepository {
     private readonly RestapiContext _context;
+    private readonly IMapper _mapper;
 
-    public MatchRepository(RestapiContext context) {
+    public MatchRepository(RestapiContext context, IMapper mapper) {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<Match> Create(MatchDTO match)
     {
-        var _match = new Match() {
-            Id = Guid.NewGuid(),
-            AteamId = match.AteamId,
-            BteamId = match.BteamId,
-            Schedule = DateTime.Now.AddDays(7),
-            Stadium = match.Stadium,
-            Score = ""
-        };
+        // Mapping MatchDTO -> Match
+        var _match = _mapper.Map<Match>(match);
 
         await _context.Matches.AddAsync(_match);
         await _context.SaveChangesAsync();

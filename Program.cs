@@ -22,6 +22,9 @@ builder.Services.AddDbContext<RestapiContext>(options =>
 // Info of gmail sender
 builder.Services.AddSingleton<EmailInfo>();
 
+// AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 // Caching
 builder.Services.AddScoped<ICacheService, CacheService>();
 
