@@ -28,6 +28,7 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 // Repositories
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 
 // Services
 builder.Services.AddScoped<IEmailSender, EmailSender>();
