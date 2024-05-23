@@ -3,6 +3,10 @@
 # Version
 - .NET SDK 7.0.400
 
+# Installation
+- Install `.NET SDK` as the same version as source code.
+- Delete all `migrations` and `add migration` from the beginning, after that `update database`.
+
 # Nuget
 - Microsoft.EntityFrameworkCore.Tools --version 6.0.3
 - Pomelo.EntityFrameworkCore.MySql -version 7.0.0
